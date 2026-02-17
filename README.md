@@ -6,14 +6,14 @@
 
    - **Student ID:** 261097953
    - **Email:** emile.labrunie@mail.mcgill.ca
-2. **Name:** [To be filled]
+2. **Name:** Ethan Wu
 
-   - **Student ID:** [To be filled]
-   - **Email:** [To be filled]
-3. **Name:** [To be filled]
+   - **Student ID:** 261117309
+   - **Email:** ethan.wu2@mail.mcgill.ca
+3. **Name:** Kenny Duy Nguyen
 
-   - **Student ID:** [To be filled]
-   - **Email:** [To be filled]
+   - **Student ID:** 261120429 
+   - **Email:** kenny.nguyen@mail.mcgill.ca
 4. **Name:** [To be filled]
 
    - **Student ID:** [To be filled]

@@ -66,7 +66,7 @@ Using **Charter Driven Session Based Exploratory Testing**, team members will:
 
 - Session notes
 - Explicit references to scripts, programs, screenshots, video clips, spreadsheets, or any other files used/created
-- Name, student ID number, and email address of session participants
+- Name of session participants
 - All files created during the session
 - Summary of session findings (bullet list answering "what we learned")
 - List of concerns identified in session
@@ -89,7 +89,6 @@ Implement a comprehensive suite of unit tests using an open-source unit test too
 - For APIs with different behavior than documentation: include two separate modules (one showing expected behavior failing, one showing actual behavior working)
 - Confirm the API does not have unexpected side effects
 - Confirm each API can generate payloads in JSON or XML
-- Confirm command line queries function correctly
 - Confirm return codes are correctly generated
 
 **Unit Test Module Structure:**

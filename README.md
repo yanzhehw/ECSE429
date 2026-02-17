@@ -14,10 +14,10 @@
 
    - **Student ID:** 261120429 
    - **Email:** kenny.nguyen@mail.mcgill.ca
-4. **Name:** [To be filled]
+4. **Name:** Yanzhe Zhang
 
-   - **Student ID:** [To be filled]
-   - **Email:** [To be filled]
+   - **Student ID:** 261016377
+   - **Email:** yanzhe.zhang@mail.mcgill.ca
 
 ---
 

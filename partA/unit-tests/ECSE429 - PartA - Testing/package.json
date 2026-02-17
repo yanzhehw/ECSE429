@@ -1,0 +1,21 @@
+{
+  "name": "ecse429-project-a",
+  "version": "1.0.0",
+  "description": "ECSE 429 - Unit Test Suite for Todo Manager REST API",
+  "scripts": {
+    "test": "mocha --recursive --timeout 15000 --require choma",
+    "test:random": "mocha --recursive --timeout 15000 --sort false",
+    "test:json": "mocha 'test/json/**/*.test.js' --timeout 15000",
+    "test:xml": "mocha 'test/xml/**/*.test.js' --timeout 15000",
+    "test:expected": "mocha 'test/**/projects_expected/**/*.test.js' --timeout 15000"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "chai": "^4.3.10",
+    "choma": "^1.2.1",
+    "mocha": "^10.2.0",
+    "xml2js": "^0.6.2"
+  }
+}

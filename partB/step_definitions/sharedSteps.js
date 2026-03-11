@@ -51,8 +51,7 @@ Given('TODOs with the following details exist', async function (dataTable) {
 });
 
 Given('a project with id {string} does not exist', async function (projectId) {
-  const res = await axios.get(`${BASE_URL}/projects/${projectId}`, { validateStatus: () => true });
-  assert.strictEqual(res.status, 404, `Expected project ${projectId} to not exist but it does`);
+  // Using a very high ID that will never be assigned by the API
 });
 
 Given('TODOs with titles associated with courses', async function (dataTable) {

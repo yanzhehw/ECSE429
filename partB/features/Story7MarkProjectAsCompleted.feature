@@ -38,4 +38,4 @@ Feature: Mark a Project as Completed
 
     Examples:
         | project_id | message                                                    |
-        | "33"       | "No such project entity instance with GUID or ID 33 found" |
+        | "99999"       | "No such project entity instance with GUID or ID 99999 found" |

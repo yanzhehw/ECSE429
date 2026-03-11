@@ -1,5 +1,7 @@
 # Local-only folder (not shared on GitHub)
 A/
-DS.Store
+**/.DS_Store
 *.log
 *.tmp
+node_modules/
+reports/

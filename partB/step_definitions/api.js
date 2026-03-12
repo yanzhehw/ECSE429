@@ -48,6 +48,10 @@ async function getAllTodos(params = {}) {
   return request('GET', `/todos${query ? '?' + query : ''}`);
 }
 
+async function getTodoById(id) {
+  return request('GET', `/todos/${id}`);
+}
+
 async function getTodoByTitle(title) {
   const res = await getAllTodos({ title });
   const todos = res.data.todos || [];
@@ -64,6 +68,10 @@ async function updateTodo(id, body) {
   return request('POST', `/todos/${id}`, body);
 }
 
+async function deleteTodo(id) {
+  return request('DELETE', `/todos/${id}`);
+}
+
 async function getProjectTasks(projectId) {
   return request('GET', `/projects/${projectId}/tasks`);
 }
@@ -77,15 +85,18 @@ async function removeTaskFromProject(projectId, todoId) {
 }
 
 module.exports = {
+  request,
   getAllProjects,
   getProjectByTitle,
   createProject,
   updateProject,
   deleteProject,
   getAllTodos,
+  getTodoById,
   getTodoByTitle,
   createTodo,
   updateTodo,
+  deleteTodo,
   getProjectTasks,
   addTaskToProject,
   removeTaskFromProject

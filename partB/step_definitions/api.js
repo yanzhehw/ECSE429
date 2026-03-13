@@ -84,6 +84,47 @@ async function removeTaskFromProject(projectId, todoId) {
   return request('DELETE', `/projects/${projectId}/tasks/${todoId}`);
 }
 
+async function getAllCategories(params = {}) {
+  const query = new URLSearchParams(params).toString();
+  return request('GET', `/categories${query ? '?' + query : ''}`);
+}
+
+async function getCategoryByTitle(title) {
+  const res = await getAllCategories({ title });
+  const categories = res.data.categories || [];
+  return categories.find(c => c.title === title) || null;
+}
+
+async function createCategory(body) {
+  const res = await request('POST', '/categories', body);
+  if (res.status === 201) global.registerCategory(res.data.id);
+  return res;
+}
+
+async function getTodoCategories(todoId) {
+  return request('GET', `/todos/${todoId}/categories`);
+}
+
+async function addCategoryToTodo(todoId, categoryId) {
+  return request('POST', `/todos/${todoId}/categories`, { id: categoryId });
+}
+
+async function removeCategoryFromTodo(todoId, categoryId) {
+  return request('DELETE', `/todos/${todoId}/categories/${categoryId}`);
+}
+
+async function getCategoryTodos(categoryId) {
+  return request('GET', `/categories/${categoryId}/todos`);
+}
+
+async function getTodoProjects(todoId) {
+  return request('GET', `/todos/${todoId}/tasksof`);
+}
+
+async function addProjectToTodo(todoId, projectId) {
+  return request('POST', `/todos/${todoId}/tasksof`, { id: projectId });
+}
+
 module.exports = {
   request,
   getAllProjects,
@@ -99,5 +140,14 @@ module.exports = {
   deleteTodo,
   getProjectTasks,
   addTaskToProject,
-  removeTaskFromProject
+  removeTaskFromProject,
+  getAllCategories,
+  getCategoryByTitle,
+  createCategory,
+  getTodoCategories,
+  addCategoryToTodo,
+  removeCategoryFromTodo,
+  getCategoryTodos,
+  getTodoProjects,
+  addProjectToTodo
 };

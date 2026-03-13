@@ -17,6 +17,30 @@ async function request(method, path, body = null) {
     throw new Error(`Service unavailable: ${error.message}`);
   }
 }
+async function getAllCategories(params = {}) {
+  const query = new URLSearchParams(params).toString();
+  return request('GET', `/categories${query ? '?' + query : ''}`);
+}
+
+async function getCategoryByTitle(title) {
+  const res = await getAllCategories({ title });
+  const categories = res.data.projects || [];
+  return categories.find(c => c.title === title) || null;
+}
+
+async function createCategory(body) {
+  const res = await request('POST', '/categories', body);
+  if (res.status === 201) global.registerCategory(res.data.id);
+  return res;
+}
+
+async function updateCategory(id, body) {
+  return request('POST', `/categories/${id}`, body);
+}
+
+async function deleteCategory(id) {
+  return request('DELETE', `/categories/${id}`);
+}
 
 async function getAllProjects(params = {}) {
   const query = new URLSearchParams(params).toString();

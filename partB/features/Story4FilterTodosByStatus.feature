@@ -11,22 +11,22 @@ Feature: Filter TODOs by completion status
             | Clean room        | false      | Weekend task        |
 
     Scenario Outline: View all incomplete TODOs (Normal Flow)
-        When the student requests all TODOs with doneStatus <status>
-        Then the response contains only TODOs with doneStatus <status>
-        And the student is notified of the completion of the query operation
-
-        Examples:
-            | status  |
-            | "false" |
-
-    Scenario Outline: View all completed TODOs (Alternate Flow)
-        When the student requests all TODOs with doneStatus <status>
-        Then the response contains only TODOs with doneStatus <status>
+        When the student requests all TODOs with doneStatus "<status>"
+        Then the response contains only TODOs with doneStatus "<status>"
         And the student is notified of the completion of the query operation
 
         Examples:
             | status |
-            | "true" |
+            | false  |
+
+    Scenario Outline: View all completed TODOs (Alternate Flow)
+        When the student requests all TODOs with doneStatus "<status>"
+        Then the response contains only TODOs with doneStatus "<status>"
+        And the student is notified of the completion of the query operation
+
+        Examples:
+            | status |
+            | true   |
 
     Scenario Outline: Filter TODOs with invalid doneStatus value (Error Flow / BUG)
         When the student requests all TODOs with invalid doneStatus "maybe"
@@ -34,5 +34,4 @@ Feature: Filter TODOs by completion status
 
         Examples:
             | status |
-            | "maybe"|
-
+            | maybe  |

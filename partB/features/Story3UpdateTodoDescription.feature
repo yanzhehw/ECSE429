@@ -10,28 +10,27 @@ Feature: Update a TODO description
             | Prepare slides    | false      | Draft outline        |
 
     Scenario Outline: Update the description of a TODO (Normal Flow)
-        When the student updates the TODO with title <title> to have description <newDescription>
-        Then the TODO with title <title> exists with description <newDescription> and doneStatus <doneStatus>
+        When the student updates the TODO with title "<title>" to have description "<newDescription>"
+        Then the TODO with title "<title>" exists with description "<newDescription>" and doneStatus "<doneStatus>"
         And the student is notified of the completion of the update operation
 
         Examples:
-            | title          | newDescription       | doneStatus |
-            | "Read textbook"| "Chapters 1 and 2"   | "false"    |
+            | title          | newDescription   | doneStatus |
+            | Read textbook  | Chapters 1 and 2 | false      |
 
     Scenario Outline: Update both title and description of a TODO (Alternate Flow)
-        When the student renames the TODO from title <oldTitle> to new title <newTitle> and description <newDescription>
-        Then the TODO with title <newTitle> exists with description <newDescription> and doneStatus "false"
+        When the student renames the TODO from title "<oldTitle>" to new title "<newTitle>" and description "<newDescription>"
+        Then the TODO with title "<newTitle>" exists with description "<newDescription>" and doneStatus "false"
         And the student is notified of the completion of the update operation
 
         Examples:
-            | oldTitle        | newTitle             | newDescription      |
-            | "Prepare slides"| "Prepare final slides"| "Finalize all slides" |
+            | oldTitle       | newTitle               | newDescription        |
+            | Prepare slides | Prepare final slides   | Finalize all slides   |
 
     Scenario Outline: Update a TODO with invalid data (Error Flow / BUG)
-        When the student attempts to update the TODO with title <title> to have invalid payload
+        When the student attempts to update the TODO with title "<title>" to have invalid payload
         And the student is notified of the completion of the update operation
 
         Examples:
-            | title           |
-            | "Read textbook" |
-
+            | title          |
+            | Read textbook  |

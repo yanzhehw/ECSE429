@@ -15,20 +15,20 @@ Feature: Create a New Category
         | "1"        | "urgent"         | "Has to be done ASAP" |
         | "20"       | "work related"   | "related to my job"   |
 
-    Scenario Outline: Create a category with only a title and no description (Alternate Flow)
-        When a student creates a new course todo list with <title>, <completed>, and <active>
-        Then the course todo list is created with <title>, <completed>, and <active>
+    Scenario Outline: Create a category with only an id and a title(Alternate Flow)
+        When a student creates a new category with <id>, and <title>
+        Then the category is created with <id>, and <title>
         And the student is notified of the completion of the creation operation
 
     Examples:
-        | title      | completed | active  |
-        | "ECSE 429" | "false"   | "true"  |
-        | "ECSE 420" | "false"   | "false" |
+        | id  | title       |
+        | "1" | "Class 1"   |
+        | "2" | "Class 2"   |
 
-    Scenario Outline: Create a project with an invalid value for the completed field (Error Flow)
-        When a student creates a new course todo list with <title>, <description>, and wrong <bad_completed>
+    Scenario Outline: Create a category with a missing value for a manditory field (Error Flow)
+        When a student creates a new course todo list with <id> and <description>
         Then the student is notified of the failed validation with a message <message>
 
     Examples:
-        | title      | description        | bad_completed | message                                          |
-        | "ECSE 429" | "Software Testing" | "done"        | "Failed Validation: completed should be BOOLEAN" |
+        | id  | title      | description    | message                                          |
+        | "2" | NONE       | "testing"      | "Failed Validation: category requires a title"   |

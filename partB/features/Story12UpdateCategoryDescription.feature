@@ -1,36 +1,38 @@
-Feature: Update a TODO description
+Feature: Update a Category description
 
-    As a student, I update the description of a TODO so I can refine the details of the task.
+    As a student, I update the description of a Category so I can refine the details of the category.
 
     Background: Server is running and TODOs exist
         Given the server is running
-        And TODOs with the following details exist
-            | title             | doneStatus | description          |
-            | Read textbook     | false      | Chapter 1            |
-            | Prepare slides    | false      | Draft outline        |
+        And Categories with the following details exist
+            | id    | title         | description        |
+            | 1     | Math          | todos for Math 223 |
+            | 2     | Physics       | todos for Phys 101 |
 
-    Scenario Outline: Update the description of a TODO (Normal Flow)
-        When the student updates the TODO with title "<title>" to have description "<newDescription>"
-        Then the TODO with title "<title>" exists with description "<newDescription>" and doneStatus "<doneStatus>"
+    Scenario Outline: Update the description of a Category (Normal Flow)
+        When the student updates the category with title "<title>" to have description "<newDescription>"
+        Then the category with title "<title>" exists with description "<newDescription>"
         And the student is notified of the completion of the update operation
 
         Examples:
-            | title          | newDescription   | doneStatus |
-            | Read textbook  | Chapters 1 and 2 | false      |
+            | id    | title         | description                     |
+            | 1     | Math          | todos for Math 223 and Math 271 |
+            | 2     | Physics       | todos for Phys 101              |
 
-    Scenario Outline: Update both title and description of a TODO (Alternate Flow)
-        When the student renames the TODO from title "<oldTitle>" to new title "<newTitle>" and description "<newDescription>"
-        Then the TODO with title "<newTitle>" exists with description "<newDescription>" and doneStatus "false"
+    Scenario Outline: Update both title and description of a category (Alternate Flow)
+        When the student renames the category from title "<oldTitle>" to new title "<newTitle>" and description "<newDescription>"
+        Then the category with title "<newTitle>" exists with description "<newDescription>"
         And the student is notified of the completion of the update operation
 
         Examples:
-            | oldTitle       | newTitle               | newDescription        |
-            | Prepare slides | Prepare final slides   | Finalize all slides   |
+            | id    | title                   | description                     |
+            | 1     | Math and Stats          | todos for Math 223 and ECSE 205 |
+            | 2     | Physics                 | todos for Phys 101              |
 
-    Scenario Outline: Update a TODO with invalid data (Error Flow / BUG)
-        When the student attempts to update the TODO with title "<title>" to have invalid payload
+    Scenario Outline: Update a category with invalid title (Error Flow)
+        When the student attempts to update the category with invalid title "<title>"
         And the student is notified of the completion of the update operation
 
         Examples:
-            | title          |
-            | Read textbook  |
+            | title         | message                                |
+            | "badTitle"  | "No such category exist in the system" |

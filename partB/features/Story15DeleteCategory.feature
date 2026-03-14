@@ -30,9 +30,9 @@ Feature: Deletion of a Category
         
 
     Scenario Outline: Delete a non-existing category (Error Flow)
-        When the student attempts to delete the category with id "<id>"
+        When the student attempts to delete the category with title "<title>"
         Then the student is notified of the non-existence error with a message "<message>"
 
         Examples:
-            | id     | message                                     |
-            | 99999  | Could not find any category with id 99999  |
+            | title    | message                                          |
+            | hello    | Could not find any category with title "hello"   |

@@ -11,7 +11,7 @@ Feature: Deletion of a Category
 
     Scenario Outline: Remove a category from the todo manager (Normal Flow)
         When a student removes a category with title <title> 
-        Then the Category with title <title> is removed from the category list in the todo manager <project>
+        Then the Category with title <title> is removed from the categories in the todo manager <project>
         And the student is notified of the completion of the deletion operation
 
     Examples:
@@ -19,21 +19,20 @@ Feature: Deletion of a Category
         | 1     | course 1      | todos for course 1 |
         
 
-    Scenario Outline: Delete multiple TODOs sequentially (Alternate Flow)
-        When the student deletes the TODO with title "<firstTitle>"
-        And the student deletes the TODO with title "<secondTitle>"
-        Then the TODO with title "<firstTitle>" no longer exists
-        And the TODO with title "<secondTitle>" no longer exists
+    Scenario Outline: Delete category after updating description (Alternate Flow)
+        Given the student assigns new description "<description>" to a category with title "<title>"
+        When a student removes a category with title "<title>" from the categories in the todo manager
+        Then the category with title "<title>" is removed from the categories in the todo manager
         And the student is notified of the completion of the deletion operation
 
         Examples:
-            | firstTitle   | secondTitle    |
-            | Old reminder | Completed task |
+        | id    | title         | description        |
+        
 
-    Scenario Outline: Delete a non-existing TODO (Error Flow)
-        When the student attempts to delete the TODO with id "<todoId>"
+    Scenario Outline: Delete a non-existing category (Error Flow)
+        When the student attempts to delete the category with id "<id>"
         Then the student is notified of the non-existence error with a message "<message>"
 
         Examples:
-            | todoId | message                             |
-            | 99999  | Could not find any instances with   |
+            | id     | message                                     |
+            | 99999  | Could not find any category with id 99999  |

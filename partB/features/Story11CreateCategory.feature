@@ -1,4 +1,4 @@
-Feature: Create a New Category
+Feature: Create a new category
 
     As a student, I create a new category to sort my tasks and projects.
 

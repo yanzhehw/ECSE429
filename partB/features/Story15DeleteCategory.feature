@@ -1,10 +1,10 @@
-Feature: Deletion of a Category
+Feature: Deletion of a category
 
     As a student, I delete a category from my todo manager to clean it up.
 
-    Background: Server is running and Categories exist
+    Background: Server is running and categories exist
         Given the server is running
-        And Categories with the following details exist
+        And categories with the following details exist
             | id    | title         | description        |
             | 1     | course 1      | todos for course 1 |
             | 2     | course 2      | todos for course 2 |

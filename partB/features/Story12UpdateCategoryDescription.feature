@@ -1,6 +1,6 @@
-Feature: Update a Category description
+Feature: Update a category description
 
-    As a student, I update the description of a Category so I can refine the details of the category.
+    As a student, I update the description of a category so I can refine the details of the category.
 
     Background: Server is running and TODOs exist
         Given the server is running
@@ -9,7 +9,7 @@ Feature: Update a Category description
             | 1     | Math          | todos for Math 223 |
             | 2     | Physics       | todos for Phys 101 |
 
-    Scenario Outline: Update the description of a Category (Normal Flow)
+    Scenario Outline: Update the description of a category (Normal Flow)
         When the student updates the category with title "<title>" to have description "<newDescription>"
         Then the category with title "<title>" exists with description "<newDescription>"
         And the student is notified of the completion of the update operation

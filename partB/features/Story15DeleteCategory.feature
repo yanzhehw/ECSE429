@@ -11,8 +11,8 @@ Feature: Deletion of a category
             | 3     | course 3      | todos for course 3 |
 
     Scenario Outline: Remove a category from the todo manager (Normal Flow)
-        When a student removes a category with title <title> 
-        Then the Category with title <title> is removed from the categories in the todo manager
+        When a student removes a category with title "<title>" 
+        Then the category with title "<title>" is removed from the categories in the todo manager
         And the student is notified of the completion of the deletion operation
 
     Examples:

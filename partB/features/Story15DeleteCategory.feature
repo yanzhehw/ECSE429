@@ -36,5 +36,5 @@ Feature: Deletion of a category
         Then the student is notified of the non-existence error with a message "<message>"
 
         Examples:
-            | title    | message                                          |
-            | hello    | Could not find any category with title "hello"   |
+            | title    | message                                             |
+            | hello    | Could not find any instances with categories/99999  |

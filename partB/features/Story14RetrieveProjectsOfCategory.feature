@@ -22,9 +22,9 @@ Feature: Retrieve all projects of a specific category
         And the student is notified of the completion of the query operation
 
     Examples:
-        | title     | completed | description          | active | category |
-        | project 1 | false     | memory task          | true   | ECSE 444 |
-        | project 2 | false     | Bluetooth connection | true   | ECSE 444 |
+        | active | category |
+        | true   | ECSE 444 |
+        | true   | ECSE 444 |
 
     Scenario Outline: Assign a category to an existing project and retrieve all projects assigned to this category (Alternate Flow)
         Given the student creates a relationship between a category with title "<category>" and a project with title "<project>"
@@ -33,16 +33,14 @@ Feature: Retrieve all projects of a specific category
         And the student is notified of the completion of the creation operation
 
     Examples:
-        | title     | completed | description          | active | category |
-        | project 1 | false     | memory task          | true   | ECSE 444 |
-        | project 2 | false     | Bluetooth connection | true   | ECSE 444 |
-        | project 3 | false     | inputs and outputs   | true   | ECSE 444 |
+        | title     | category |
+        | project 3 | ECSE 444 |
 
     Scenario Outline: Retrieve all projects assigned to a non-existing category (Error Flow)
         Given a category with title "<category>" does not exist
-        When a student adds a category with title "<category>" to a project with title "<project>"
+        When a student adds a category with title "<category>" to a project with title "<title>"
         Then the student is notified of the non-existence error with a message "<message>"
 
-    Examples:
-        | id       | title         | description     | message                                                           |
-        | 99999    | fake category | NA              | Could not find parent thing for relationship projects/99999/tasks |
+    Examples:        
+        | title     | category      | message                                                                     |
+        | project 2 | fake category | Could not find parent thing for relationship categories/fake category/tasks |

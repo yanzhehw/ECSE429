@@ -26,9 +26,9 @@ Feature: Create a new category
         | "2" | "Class 2"   |
 
     Scenario Outline: Create a category with a missing value for a manditory field (Error Flow)
-        When a student creates a new course todo list with <id> and <description>
+        When a student attempts to create a category with a missing title NONE
         Then the student is notified of the failed validation with a message <message>
 
     Examples:
-        | id  | title      | description    | message                                          |
-        | "2" | NONE       | "testing"      | "Failed Validation: category requires a title"   |
+        | id  | title      | message                     |
+        | 2   | NONE       | title : field is mandatory  |

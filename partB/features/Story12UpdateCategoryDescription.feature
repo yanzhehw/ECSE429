@@ -4,7 +4,7 @@ Feature: Update a category description
 
     Background: Server is running and TODOs exist
         Given the server is running
-        And Categories with the following details exist
+        And categories with the following details exist
             | id    | title         | description        |
             | 1     | Math          | todos for Math 223 |
             | 2     | Physics       | todos for Phys 101 |
@@ -25,9 +25,9 @@ Feature: Update a category description
         And the student is notified of the completion of the update operation
 
         Examples:
-            | id    | newTitle          | newDescription                  |
-            | 1     | Math and Stats    | todos for Math 223 and ECSE 205 |
-            | 2     | Physics           | todos for Phys 101              |
+            | id    | oldTitle | newTitle          | newDescription                  |
+            | 1     | Math     | Math and Stats    | todos for Math 223 and ECSE 205 |
+            | 2     | Physics  | Physics           | todos for Phys 101              |
 
     Scenario Outline: Update a category with invalid title (Error Flow)
         When the student attempts to update the category with invalid title "<title>"
@@ -35,4 +35,4 @@ Feature: Update a category description
 
         Examples:
             | title         | message                                |
-            | "badTitle"  | "No such category exist in the system" |
+            | badTitle      | No such category exist in the system   |

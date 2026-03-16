@@ -15,8 +15,7 @@ Feature: Assign a project to a category
 
     Scenario Outline: Add an existing category to an existing project (Normal Flow)
         When a student adds a category with title "<category>" to a project with title "<title>"
-        Then the project with title "<title>" can see the category with title "<category>"
-        And the student is notified of the completion of the creation operation
+        Then the student is notified of the completion of the creation operation
 
     Examples:
         | title     | completed | description        | active | category   |

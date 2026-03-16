@@ -14,8 +14,8 @@ Feature: Assign a project to a category
             | project 1 | false     | testing an API     | true   |
 
     Scenario Outline: Add an existing category to an existing project (Normal Flow)
-        When a student adds a category with title "<category>" to a project with title "<project>"
-        Then the project with title "<project>" can see the category with title "<category>"
+        When a student adds a category with title "<category>" to a project with title "<title>"
+        Then the project with title "<title>" can see the category with title "<category>"
         And the student is notified of the completion of the creation operation
 
     Examples:
@@ -25,7 +25,7 @@ Feature: Assign a project to a category
 
     Scenario Outline: Create a new category and immediately add it to a project (Alternate Flow)
         Given the student creates a category with title "<category>" and description "<description>"
-        When a student adds a category with title "<category>" to a project with title "<project>"
+        When a student adds a category with title "<category>" to a project with title "<title>"
         Then the student is notified of the completion of the creation operation
 
     Examples:
@@ -34,9 +34,9 @@ Feature: Assign a project to a category
 
     Scenario Outline: Add a category to a non-existing project (Error Flow)
         Given a project with title "<title>" does not exist
-        When a student adds a category with title "<category>" to a project with title "<project>"
+        When a student adds a category with title "<category>" to a project with title "<title>"
         Then the student is notified of the non-existence error with a message "<message>"
 
     Examples:
-        | title     | completed | description        | active | category   | message                                                         |
+        | title     | completed  | description       | active | category   | message                                                         |
         | project2  | false      | Software Testing  | true   | ECSE 429   | Could not find parent relationship categories/project2/projects |

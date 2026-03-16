@@ -1,0 +1,47 @@
+const { When, Then } = require('@cucumber/cucumber');
+const assert = require('assert');
+const { createCategory, addCategoryToProject } = require('./api');
+
+// ── Normal Flow ───────────────────────────────────────────────────────────────
+
+When('a student adds a category with title {string} to a project with title {string}',
+  async function (categoryTitle, projectTitle) {
+    const categoryId = await getCategoryIdByTitle(categoryTitle);
+    const projectId = await getProjectIdByTitle(projectTitle);
+    this.lastResponse = await addCategoryToProject(projectId, categoryId);
+  }
+);
+
+Then('the project with title {string} can see the category with title {string}',
+  async function (projectTitle, categoryTitle) {
+    const projectCategories = await getProjectCategories(projectTitle);
+    const hasCategory = projectCategories.some(c => c.title === categoryTitle);
+    assert.strictEqual(hasCategory, true);
+  }
+);
+
+// ── Alternate Flow ────────────────────────────────────────────────────────────
+
+Given('the student creates a category with title {string} and description {string}',
+  async function (title, description) {
+    await createCategory({ title, description });
+  }
+);
+
+// ── Error Flow ────────────────────────────────────────────────────────────────
+
+Given('a project with title {string} does not exist',
+  async function (title) {
+    const projectId = await getProjectIdByTitle(title);
+    if (projectId) {
+      await deleteProject(projectId);
+    }
+  }
+);
+
+Then('the student is notified of the non-existence error with a message {string}',
+  async function (message) {
+    assert.strictEqual(this.lastResponse.status, 404);
+    assert.strictEqual(this.lastResponse.data.errorMessages[0], message);
+  }
+);

@@ -29,7 +29,7 @@ Feature: Retrieve all projects of a specific category
     Scenario Outline: Assign a category to an existing project and retrieve all projects assigned to this category (Alternate Flow)
         Given the student creates a relationship between a category with title "<category>" and a project with title "<project>"
         When the student retrieves all projects assigned to category with title "<category>"
-        Then the category with title "<category>" is added as a task of the course todo list with name "<project>"
+        Then the category with title "<category>" is added as a task of the course todo list with name "<title>"
         And the student is notified of the completion of the creation operation
 
     Examples:
@@ -44,7 +44,5 @@ Feature: Retrieve all projects of a specific category
         Then the student is notified of the non-existence error with a message "<message>"
 
     Examples:
-        | message                                                           |
-        | Could not find parent thing for relationship projects/99999/tasks |
         | id       | title         | description     | message                                                           |
         | 99       | fake category | NA              | Could not find parent thing for relationship projects/99999/tasks |

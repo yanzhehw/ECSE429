@@ -17,10 +17,7 @@ async function request(method, path, body = null) {
     throw new Error(`Service unavailable: ${error.message}`);
   }
 }
-async function getAllCategories(params = {}) {
-  const query = new URLSearchParams(params).toString();
-  return request('GET', `/categories${query ? '?' + query : ''}`);
-}
+
 
 async function getCategoryByTitle(title) {
   const res = await getAllCategories({ title });
@@ -28,11 +25,6 @@ async function getCategoryByTitle(title) {
   return categories.find(c => c.title === title) || null;
 }
 
-async function createCategory(body) {
-  const res = await request('POST', '/categories', body);
-  if (res.status === 201) global.registerCategory(res.data.id);
-  return res;
-}
 
 async function updateCategory(id, body) {
   return request('POST', `/categories/${id}`, body);
@@ -149,6 +141,19 @@ async function addProjectToTodo(todoId, projectId) {
   return request('POST', `/todos/${todoId}/tasksof`, { id: projectId });
 }
 
+async function addCategoryToProject(categoryId, projectId) {
+  return request('POST', `/categories/${categoryId }/projects`, {id: projectId});
+}
+async function getCategoryIdByTitle(title) {
+  const response = await axios.get(`${API_URL}/categories?title=${title}`);
+  const categories = response.data.categories;
+  if (categories && categories.length > 0) {
+    return categories[0].id; 
+  } else {
+    return null; 
+  }
+}
+
 module.exports = {
   request,
   getAllProjects,
@@ -173,5 +178,9 @@ module.exports = {
   removeCategoryFromTodo,
   getCategoryTodos,
   getTodoProjects,
-  addProjectToTodo
+  addProjectToTodo,
+  addCategoryToProject,
+  deleteCategory,
+  updateCategory,
+  getCategoryIdByTitle
 };

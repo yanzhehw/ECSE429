@@ -15,7 +15,7 @@ Feature: Update a Category description
         And the student is notified of the completion of the update operation
 
         Examples:
-            | id    | title         | description                     |
+            | id    | title         | newDescription                  |
             | 1     | Math          | todos for Math 223 and Math 271 |
             | 2     | Physics       | todos for Phys 101              |
 
@@ -25,9 +25,9 @@ Feature: Update a Category description
         And the student is notified of the completion of the update operation
 
         Examples:
-            | id    | title                   | description                     |
-            | 1     | Math and Stats          | todos for Math 223 and ECSE 205 |
-            | 2     | Physics                 | todos for Phys 101              |
+            | id    | newTitle          | newDescription                  |
+            | 1     | Math and Stats    | todos for Math 223 and ECSE 205 |
+            | 2     | Physics           | todos for Phys 101              |
 
     Scenario Outline: Update a category with invalid title (Error Flow)
         When the student attempts to update the category with invalid title "<title>"

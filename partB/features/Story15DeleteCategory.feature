@@ -8,15 +8,17 @@ Feature: Deletion of a Category
             | id    | title         | description        |
             | 1     | course 1      | todos for course 1 |
             | 2     | course 2      | todos for course 2 |
+            | 3     | course 3      | todos for course 3 |
 
     Scenario Outline: Remove a category from the todo manager (Normal Flow)
         When a student removes a category with title <title> 
-        Then the Category with title <title> is removed from the categories in the todo manager <project>
+        Then the Category with title <title> is removed from the categories in the todo manager
         And the student is notified of the completion of the deletion operation
 
     Examples:
         | id    | title         | description        |
         | 1     | course 1      | todos for course 1 |
+        | 2     | course 2      | todos for course 2 |
         
 
     Scenario Outline: Delete category after updating description (Alternate Flow)
@@ -27,7 +29,7 @@ Feature: Deletion of a Category
 
         Examples:
         | id    | title         | description        |
-        
+        | 1     | course 1      | todos for course 1 |
 
     Scenario Outline: Delete a non-existing category (Error Flow)
         When the student attempts to delete the category with title "<title>"

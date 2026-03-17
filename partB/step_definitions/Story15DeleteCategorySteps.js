@@ -3,7 +3,8 @@ const assert = require('assert');
 const {
  deleteCategory,
  updateCategory,
- getCategoryIdByTitle
+ getCategoryIdByTitle,
+ getCategoryByTitle
 } = require('./api');
 
 // ── Normal Flow ───────────────────────────────────────────────────────────────
@@ -15,18 +16,13 @@ When('a student removes a category with title {string}',
   }
 );
 
-Then('the Category with title {string} is removed from the categories in the todo manager',
+Then('the category with title {string} is removed from the categories in the todo manager',
   async function (title) {
     const category = await getCategoryByTitle(title);
-    assert.strictEqual(category, undefined); 
+    assert.strictEqual(category, null);
   }
 );
 
-Then('the student is notified of the completion of the deletion operation',
-  async function () {
-    assert.ok(this.lastResponse.status === 200 || this.lastResponse.status === 204);
-  }
-);
 
 // ── Alternate Flow ────────────────────────────────────────────────────────────
 

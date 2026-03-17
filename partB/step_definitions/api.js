@@ -18,14 +18,6 @@ async function request(method, path, body = null) {
   }
 }
 
-
-async function getCategoryByTitle(title) {
-  const res = await getAllCategories({ title });
-  const categories = res.data.projects || [];
-  return categories.find(c => c.title === title) || null;
-}
-
-
 async function updateCategory(id, body) {
   return request('POST', `/categories/${id}`, body);
 }
@@ -140,12 +132,11 @@ async function getTodoProjects(todoId) {
 async function addProjectToTodo(todoId, projectId) {
   return request('POST', `/todos/${todoId}/tasksof`, { id: projectId });
 }
-
-async function addCategoryToProject(categoryId, projectId) {
-  return request('POST', `/categories/${categoryId }/projects`, {id: projectId});
+async function addCategoryToProject(projectId, categoryId) {
+  return request('POST', `/projects/${projectId}/categories`, { id: categoryId });
 }
 async function getCategoryIdByTitle(title) {
-  const response = await axios.get(`${API_URL}/categories?title=${title}`);
+  const response = await axios.get(`${BASE_URL}/categories?title=${title}`);
   const categories = response.data.categories;
   if (categories && categories.length > 0) {
     return categories[0].id; 
@@ -153,7 +144,14 @@ async function getCategoryIdByTitle(title) {
     return null; 
   }
 }
+async function getProjectsByCategory(categoryId) {
+  return request('GET', `/categories/${categoryId}/projects`);
+}
 
+async function getProjectIdByTitle(title) {
+  const project = await getProjectByTitle(title);
+  return project ? project.id : null;
+}
 module.exports = {
   request,
   getAllProjects,
@@ -182,5 +180,7 @@ module.exports = {
   addCategoryToProject,
   deleteCategory,
   updateCategory,
-  getCategoryIdByTitle
+  getCategoryIdByTitle,
+  getProjectsByCategory,
+  getProjectIdByTitle
 };

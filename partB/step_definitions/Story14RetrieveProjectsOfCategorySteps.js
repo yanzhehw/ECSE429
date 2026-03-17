@@ -1,6 +1,6 @@
-const { When, Then } = require('@cucumber/cucumber');
+const { Given, When, Then } = require('@cucumber/cucumber');
 const assert = require('assert');
-const { getProjectsByCategory, getCategoryIdByTitle } = require('./api');
+const { getProjectsByCategory, getCategoryIdByTitle, getProjectIdByTitle } = require('./api');
 
 
 // ── Normal Flow ───────────────────────────────────────────────────────────────
@@ -12,22 +12,6 @@ When('the student retrieves all projects with active set to {string} and assigne
   }
 );
 
-Then('the system returns only projects where active is {string} and completed is {string}',
-  async function (active, completed) {
-    assert.strictEqual(this.lastResponse.status, 200);
-    const projects = this.lastResponse.data.projects;
-    for (const project of projects) {
-      assert.strictEqual(String(project.active), active);
-      assert.strictEqual(String(project.completed), completed);
-    }
-  }
-);
-
-Then('the student is notified of the completion of the query operation',
-  async function () {
-    assert.strictEqual(this.lastResponse.status, 200);
-  }
-);
 
 // ── Alternate Flow ────────────────────────────────────────────────────────────
 

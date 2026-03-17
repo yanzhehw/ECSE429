@@ -29,19 +29,7 @@ When('the student requests to query all projects with invalid active value {stri
   }
 );
 
-Then('the system returns only projects where active is {string} and completed is {string}',
-  async function (active, completed) {
-    assert.strictEqual(this.lastResponse.status, 200);
-    const projects = this.lastResponse.data.projects || [];
-    assert.ok(projects.length > 0, 'Expected at least one project in results');
-    for (const project of projects) {
-      assert.strictEqual(project.active, active,
-        `Project "${project.title}" has unexpected active value`);
-      assert.strictEqual(project.completed, completed,
-        `Project "${project.title}" has unexpected completed value`);
-    }
-  }
-);
+
 
 // ── Alternate Flow ────────────────────────────────────────────────────────────
 

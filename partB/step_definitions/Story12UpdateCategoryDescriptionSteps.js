@@ -1,6 +1,6 @@
 const { When, Then } = require('@cucumber/cucumber');
 const assert = require('assert');
-const { updateCategory } = require('./api');
+const { updateCategory, getCategoryByTitle, getCategoryIdByTitle} = require('./api');
 
 // ── Normal Flow ───────────────────────────────────────────────────────────────
 
@@ -18,11 +18,6 @@ Then('the category with title {string} exists with description {string}',
   }
 );
 
-Then('the student is notified of the completion of the update operation',
-  async function () {
-    assert.strictEqual(this.lastResponse.status, 200);
-  }
-);
 
 // ── Alternate Flow ────────────────────────────────────────────────────────────
 

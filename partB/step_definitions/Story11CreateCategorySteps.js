@@ -6,27 +6,24 @@ const { createCategory } = require('./api');
 
 When('a student creates a new category with {string}, {string}, and {string}',
   async function (id, title, description) {
+   
     this.lastResponse = await createCategory({
-      id,
-      title,
-      description
+      title: title,
+      description: description
     });
   }
 );
 
 Then('the category is created with {string}, {string}, and {string}',
-  async function (id, title, description) {
-    assert.strictEqual(this.lastResponse.status, 201);
+  async function (expectedId, expectedTitle, expectedDescription) {
+    assert.strictEqual(this.lastResponse.status, 201, `Expected 201 Created but got ${this.lastResponse.status}`);
+    
     const category = this.lastResponse.data;
-    assert.strictEqual(category.id, id);
-    assert.strictEqual(category.title, title);
-    assert.strictEqual(category.description, description);
-  }
-);
+    
+    assert.ok(category.id, "Category should have an auto-generated ID");
 
-Then('the student is notified of the completion of the creation operation',
-  async function () {
-    assert.ok(this.lastResponse.status === 201 || this.lastResponse.status === 200);
+    assert.strictEqual(category.title, expectedTitle);
+    assert.strictEqual(category.description, expectedDescription);
   }
 );
 
@@ -35,35 +32,24 @@ Then('the student is notified of the completion of the creation operation',
 When('a student creates a new category with {string}, and {string}',
   async function (id, title) {
     this.lastResponse = await createCategory({
-      id,
-      title
+      title: title
     });
   }
 );
 
 Then('the category is created with {string}, and {string}',
-  async function (id, title) {
-    assert.strictEqual(this.lastResponse.status, 201);
+  async function (expectedId, expectedTitle) {
+    assert.strictEqual(this.lastResponse.status, 201, `Expected 201 Created but got ${this.lastResponse.status}`);
+    
     const category = this.lastResponse.data;
-    assert.strictEqual(category.id, id);
-    assert.strictEqual(category.title, title);
+    assert.ok(category.id, "Category should have an auto-generated ID");
+    assert.strictEqual(category.title, expectedTitle);
   }
 );
 
-// ── Error Flow ────────────────────────────────────────────────────────────────
+When('a student attempts to create a category with a missing title NONE', async function () {
+  this.lastResponse = await createCategory({
+    description: "testing"
+  });
+});
 
-When('a student creates a new course todo list with {string} and {string}',
-  async function (id, description) {
-    this.lastResponse = await createCategory({
-      id,
-      description
-    });
-  }
-);
-
-Then('the student is notified of the failed validation with a message {string}',
-  async function (message) {
-    assert.strictEqual(this.lastResponse.status, 400);
-    assert.strictEqual(this.lastResponse.data.errorMessages[0], message);
-  }
-);

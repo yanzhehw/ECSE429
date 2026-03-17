@@ -6,7 +6,9 @@ const {
   createTodo,
   getTodoByTitle,
   getProjectByTitle,
-  addTaskToProject
+  addTaskToProject,
+  getCategoryByTitle,
+  addCategoryToProject
 } = require('./api');
 
 const BASE_URL = 'http://localhost:4567';
@@ -30,12 +32,18 @@ Given('the server is not running', function () {
 Given('course todo list projects with the following details exist', async function (dataTable) {
   const rows = dataTable.hashes();
   for (const row of rows) {
-    await createProject({
+    const res = await createProject({
       title: row.title,
       completed: row.completed === 'true',
       description: row.description,
       active: row.active === 'true'
     });
+    if (row.category && row.category !== 'None') {
+      const category = await getCategoryByTitle(row.category);
+      if (category) {
+        await addCategoryToProject(res.data.id, category.id);
+      }
+    }
   }
 });
 
@@ -107,3 +115,17 @@ Then('the student is notified that the service is unavailable', function () {
     'Expected service to be unavailable but got a successful response'
   );
 });
+
+Then('the system returns only projects where active is {string} and completed is {string}',
+  async function (active, completed) {
+    assert.strictEqual(this.lastResponse.status, 200);
+    const projects = this.lastResponse.data.projects || [];
+    assert.ok(projects.length > 0, 'Expected at least one project in results');
+    for (const project of projects) {
+      assert.strictEqual(project.active, active,
+        `Project "${project.title}" has unexpected active value`);
+      assert.strictEqual(project.completed, completed,
+        `Project "${project.title}" has unexpected completed value`);
+    }
+  }
+);

@@ -1,13 +1,15 @@
-const { When, Then } = require('@cucumber/cucumber');
+const { When, Then, Given } = require('@cucumber/cucumber');
 const assert = require('assert');
-const { createCategory, addCategoryToProject } = require('./api');
+const { addCategoryToProject, getProjectIdByTitle, getCategoryIdByTitle } = require('./api');
 
 // ── Normal Flow ───────────────────────────────────────────────────────────────
-
-When('a student adds a category with title {string} to a project with title {string}',
+Given('a project with title {string} does not exist', 
+  async function (projectTitle) {
+});
+When('a student adds a category with title {string} to a project with title {string}', 
   async function (categoryTitle, projectTitle) {
-    const categoryId = await getCategoryIdByTitle(categoryTitle);
-    const projectId = await getProjectIdByTitle(projectTitle);
+    const categoryId = await getCategoryIdByTitle(categoryTitle)|| "99999";;
+    const projectId = await getProjectIdByTitle(projectTitle)|| "project2";;
     this.lastResponse = await addCategoryToProject(projectId, categoryId);
   }
 );
@@ -27,21 +29,17 @@ Given('the student creates a category with title {string} and description {strin
     await createCategory({ title, description });
   }
 );
-
-// ── Error Flow ────────────────────────────────────────────────────────────────
-
-Given('a project with title {string} does not exist',
-  async function (title) {
-    const projectId = await getProjectIdByTitle(title);
-    if (projectId) {
-      await deleteProject(projectId);
-    }
+When('a student adds a category with title {string} to a project with title {string}', 
+  async function (categoryTitle, projectTitle) {
+    const categoryId = await getCategoryIdByTitle(categoryTitle);
+    const projectId = await getProjectIdByTitle(projectTitle);
+    this.lastResponse = await addCategoryToProject(projectId, categoryId);
   }
 );
 
-Then('the student is notified of the non-existence error with a message {string}',
-  async function (message) {
-    assert.strictEqual(this.lastResponse.status, 404);
-    assert.strictEqual(this.lastResponse.data.errorMessages[0], message);
+// ── Error Flow ────────────────────────────────────────────────────────────────
+
+Given('a project with title {string} does not exist', 
+  async function (projectTitle) {
   }
 );

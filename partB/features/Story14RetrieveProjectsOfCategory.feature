@@ -33,8 +33,8 @@ Feature: Retrieve all projects of a specific category
         And the student is notified of the completion of the creation operation
 
     Examples:
-        | title     | category |
-        | project 3 | ECSE 444 |
+        | title     | category | project  |
+        | project 3 | ECSE 444 | project 3 |
 
     Scenario Outline: Retrieve all projects assigned to a non-existing category (Error Flow)
         Given a category with title "<category>" does not exist
@@ -42,5 +42,5 @@ Feature: Retrieve all projects of a specific category
         Then the student is notified of the non-existence error with a message "<message>"
 
     Examples:        
-        | title     | category      | message                                                                     |
-        | project 2 | fake category | Could not find parent thing for relationship categories/fake category/tasks |
+        | title     | category      | message                                    |
+        | project 2 | fake category | Could not find thing matching value for id |

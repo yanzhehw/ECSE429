@@ -37,5 +37,5 @@ Feature: Assign a project to a category
         Then the student is notified of the non-existence error with a message "<message>"
 
     Examples:
-        | title      | category   | message                                                         |
-        | project 2  | ECSE 429   | Could not find parent relationship categories/project2/projects |
+        | title      | category   | message                                                                   |
+        | project 2  | ECSE 429   | Could not find parent thing for relationship projects/project2/categories |

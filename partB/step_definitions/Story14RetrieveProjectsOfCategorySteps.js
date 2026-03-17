@@ -19,6 +19,13 @@ When('the student retrieves all projects with active set to {string} and assigne
 
 // ── Alternate Flow ────────────────────────────────────────────────────────────
 
+Given('the student creates a relationship between a category with title {string} and a project with title {string}',
+  async function (categoryTitle, projectTitle) {
+    const categoryId = await getCategoryIdByTitle(categoryTitle);
+    const projectId = await getProjectIdByTitle(projectTitle);
+    this.creationResponse = await addCategoryToProject(projectId, categoryId);
+  }
+);
 
 When('the student retrieves all projects assigned to category with title {string}',
   async function (categoryTitle) {

@@ -78,7 +78,8 @@ Given('TODOs with titles associated with courses', async function (dataTable) {
 // ── Shared notification steps ─────────────────────────────────────────────────
 
 Then('the student is notified of the completion of the creation operation', function () {
-  assert.strictEqual(this.lastResponse.status, 201);
+  const response = this.creationResponse || this.lastResponse;
+  assert.strictEqual(response.status, 201);
 });
 
 Then('the student is notified of the completion of the update operation', function () {

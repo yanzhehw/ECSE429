@@ -29,7 +29,7 @@ Feature: Update a TODO description
 
     Scenario Outline: Update a TODO with invalid data (Error Flow / BUG)
         When the student attempts to update the TODO with title "<title>" to have invalid payload
-        And the student is notified of the completion of the update operation
+        Then the student is notified of the failed validation with a message "Failed Validation"
 
         Examples:
             | title          |

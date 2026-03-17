@@ -30,7 +30,7 @@ Feature: Filter TODOs by completion status
 
     Scenario Outline: Filter TODOs with invalid doneStatus value (Error Flow / BUG)
         When the student requests all TODOs with invalid doneStatus "maybe"
-        And the student is notified of the completion of the query operation
+        Then the student is notified of the failed validation with a message "Failed Validation"
 
         Examples:
             | status |

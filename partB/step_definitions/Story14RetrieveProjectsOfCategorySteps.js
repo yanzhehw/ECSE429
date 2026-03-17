@@ -1,6 +1,10 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
 const assert = require('assert');
-const { getProjectsByCategory, getCategoryIdByTitle, getProjectIdByTitle } = require('./api');
+const { addCategoryToProject, 
+  getProjectsByCategory, 
+  getCategoryIdByTitle, 
+  getProjectIdByTitle,
+  getProjectCategories } = require('./api');
 
 
 // ── Normal Flow ───────────────────────────────────────────────────────────────
@@ -15,13 +19,6 @@ When('the student retrieves all projects with active set to {string} and assigne
 
 // ── Alternate Flow ────────────────────────────────────────────────────────────
 
-Given('the student creates a relationship between a category with title {string} and a project with title {string}',
-  async function (categoryTitle, projectTitle) {
-    const categoryId = await getCategoryIdByTitle(categoryTitle);
-    const projectId = await getProjectIdByTitle(projectTitle);
-    await addCategoryToProject(projectId, categoryId);
-  }
-);
 
 When('the student retrieves all projects assigned to category with title {string}',
   async function (categoryTitle) {
@@ -32,9 +29,13 @@ When('the student retrieves all projects assigned to category with title {string
 
 Then('the category with title {string} is added as a task of the course todo list with name {string}',
   async function (categoryTitle, projectTitle) {
-    const projectCategories = await getProjectCategories(projectTitle);
-    const hasCategory = projectCategories.some(c => c.title === categoryTitle);
-    assert.strictEqual(hasCategory, true);
+    const projectId = await getProjectIdByTitle(projectTitle);
+    const res = await getProjectCategories(projectId);
+
+    const categories = res.data.categories || []; 
+    
+    const hasCategory = categories.some(c => c.title === categoryTitle);
+    assert.strictEqual(hasCategory, true, `Category ${categoryTitle} not found in project ${projectTitle}`);
   }
 );
 

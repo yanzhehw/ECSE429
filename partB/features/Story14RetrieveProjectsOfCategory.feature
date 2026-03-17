@@ -5,10 +5,10 @@ Feature: Retrieve all projects of a specific category
     Background: Server is running, TODOs and projects exist
         Given the server is running
         And categories with the following details exist
-            | id       | title        | description           |
-            | 1        | ECSE 429     | Software Testing      |
-            | 2        | ESCE 420     | Parallel Computing    |
-            | 3        | ECSE 444     | Microprocessors       |
+            | id     | title        | description           |
+            | 1      | ECSE 429     | Software Testing      |
+            | 2      | ESCE 420     | Parallel Computing    |
+            | 3      | ECSE 444     | Microprocessors       |
         And course todo list projects with the following details exist
             | title     | completed | description          | active | category |
             | project 1 | false     | memory task          | true   | ECSE 444 |
@@ -18,13 +18,13 @@ Feature: Retrieve all projects of a specific category
 
     Scenario Outline: Retrieve all active projects assigned to a category (Normal Flow)
         When the student retrieves all projects with active set to "<active>" and assigned to category with title "<category>"
-        Then the system returns only projects where active is "<active>" and completed is "<completed>"
+        Then the system returns only projects where active is "<active>"
         And the student is notified of the completion of the query operation
 
     Examples:
         | active | category |
         | true   | ECSE 444 |
-        | true   | ECSE 444 |
+        | true   | ECSE 420 |
 
     Scenario Outline: Assign a category to an existing project and retrieve all projects assigned to this category (Alternate Flow)
         Given the student creates a relationship between a category with title "<category>" and a project with title "<project>"

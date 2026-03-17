@@ -18,8 +18,8 @@ Feature: Assign a project to a category
         Then the student is notified of the completion of the creation operation
 
     Examples:
-        | title     | completed | description        | active | category   |
-        | project 1 | false     | Software Testing   | true   | ECSE 429   |
+        | title     | category   |
+        | project 1 | ECSE 429   |
 
 
     Scenario Outline: Create a new category and immediately add it to a project (Alternate Flow)
@@ -28,8 +28,8 @@ Feature: Assign a project to a category
         Then the student is notified of the completion of the creation operation
 
     Examples:
-        | title      | completed | description        | active | category   |
-        | project 1  | false     | testing an API     | true   | ECSE 429   |
+        | title      | category   |
+        | project 1  | ECSE 429   |
 
     Scenario Outline: Add a category to a non-existing project (Error Flow)
         Given a project with title "<title>" does not exist
@@ -37,5 +37,5 @@ Feature: Assign a project to a category
         Then the student is notified of the non-existence error with a message "<message>"
 
     Examples:
-        | title     | completed  | description       | active | category   | message                                                         |
-        | project2  | false      | Software Testing  | true   | ECSE 429   | Could not find parent relationship categories/project2/projects |
+        | title      | category   | message                                                         |
+        | project 2  | ECSE 429   | Could not find parent relationship categories/project2/projects |

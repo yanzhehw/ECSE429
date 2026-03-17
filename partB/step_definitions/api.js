@@ -147,6 +147,9 @@ async function getCategoryIdByTitle(title) {
 async function getProjectsByCategory(categoryId) {
   return request('GET', `/categories/${categoryId}/projects`);
 }
+async function getProjectCategories(projectId) {
+  return request('GET', `/projects/${projectId}/categories`);
+}
 
 async function getProjectIdByTitle(title) {
   const project = await getProjectByTitle(title);
@@ -182,5 +185,6 @@ module.exports = {
   updateCategory,
   getCategoryIdByTitle,
   getProjectsByCategory,
-  getProjectIdByTitle
+  getProjectIdByTitle,
+  getProjectCategories
 };

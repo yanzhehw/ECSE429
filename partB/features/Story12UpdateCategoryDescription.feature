@@ -31,8 +31,9 @@ Feature: Update a category description
 
     Scenario Outline: Update a category with invalid title (Error Flow)
         When the student attempts to update the category with invalid title "<title>"
-        And the student is notified of the completion of the update operation
+        Then the student is notified of the non-existence error with a message "<message>"
+
 
         Examples:
-            | title         | message                                |
-            | badTitle      | No such category exist in the system   |
+            | title         | message                                                             |
+            | badTitle      | No such category entity instance with GUID or ID invalid-id found   |

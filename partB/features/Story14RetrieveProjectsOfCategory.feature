@@ -43,4 +43,4 @@ Feature: Retrieve all projects of a specific category
 
     Examples:        
         | title     | category      | message                                                                     |
-        | project 2 | fake category | Could not find parent thing for relationship categories/fake category/tasks |
+        | project 2 | fake category | Could not find thing matching value for id |

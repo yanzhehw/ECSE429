@@ -202,8 +202,7 @@ ECSE429/
     │   ├── step_definitions/       # api.js, sharedSteps.js, hooks.js, Story*Steps.js
     │   └── package.json            # npm test, npm run test:random
     ├── bug_summaries/              # Bug report PDFs (Story/API defects)
-    ├── reports/                    # Generated reports (e.g. cucumber-report.html)
-    └── report_ecse_429_part_B*.pdf # Part B written report
+    └── ECSE429 - Report PartB.pdf  # Part B written report
 ```
 
 ### Directory Requirements Mapping
@@ -244,8 +243,6 @@ ECSE429/
 - **`partB/bug_summaries/`**:
   - **Requirement**: Bug summaries (Part B Section 3)
   - PDF bug reports for defects found during story test execution, with story reference and steps to reproduce
-- **`partB/reports/`**:
-  - Generated artifacts (e.g. Cucumber HTML report) when using the HTML formatter
 - **`partB/` (root)**:
   - Part B written report PDF and any Part B videos (deliverables Section 4–5)
 

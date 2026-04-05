@@ -1,0 +1,45 @@
+const { When, Then, Given } = require('@cucumber/cucumber');
+const assert = require('assert');
+const { addCategoryToProject, getProjectIdByTitle, getCategoryIdByTitle } = require('./api');
+
+// ── Normal Flow ───────────────────────────────────────────────────────────────
+Given('a project with title {string} does not exist', 
+  async function (projectTitle) {
+});
+When('a student adds a category with title {string} to a project with title {string}', 
+  async function (categoryTitle, projectTitle) {
+    const categoryId = await getCategoryIdByTitle(categoryTitle)|| "99999";;
+    const projectId = await getProjectIdByTitle(projectTitle)|| "project2";;
+    this.lastResponse = await addCategoryToProject(projectId, categoryId);
+  }
+);
+
+Then('the project with title {string} can see the category with title {string}',
+  async function (projectTitle, categoryTitle) {
+    const projectCategories = await getProjectCategories(projectTitle);
+    const hasCategory = projectCategories.some(c => c.title === categoryTitle);
+    assert.strictEqual(hasCategory, true);
+  }
+);
+
+// ── Alternate Flow ────────────────────────────────────────────────────────────
+
+Given('the student creates a category with title {string} and description {string}',
+  async function (title, description) {
+    await createCategory({ title, description });
+  }
+);
+When('a student adds a category with title {string} to a project with title {string}', 
+  async function (categoryTitle, projectTitle) {
+    const categoryId = await getCategoryIdByTitle(categoryTitle);
+    const projectId = await getProjectIdByTitle(projectTitle);
+    this.lastResponse = await addCategoryToProject(projectId, categoryId);
+  }
+);
+
+// ── Error Flow ────────────────────────────────────────────────────────────────
+
+Given('a project with title {string} does not exist', 
+  async function (projectTitle) {
+  }
+);

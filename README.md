@@ -135,19 +135,74 @@ Target size: 5-10 pages
 
 ---
 
+## Part B: Story Testing of REST API
+
+### Project Overview (Part B)
+
+Part B builds on the same Todo Manager REST API used in Part A. The goal is to define user stories in Gherkin, implement them as an automated acceptance test suite with Cucumber.js, and document defects found during execution.
+
+**Application (same as Part A):**
+
+- Start the API: `java -jar runTodoManagerRestAPI-1.5.5.jar`
+- API docs: http://localhost:4567/docs
+
+### Part B Objectives
+
+#### 1. Story Test Suite (Gherkin + Cucumber)
+
+- Define **20 user stories** (5 per team member) as Gherkin feature files, each with at least:
+  - **Normal flow:** primary success path
+  - **Alternate flow:** secondary path
+  - **Error flow:** invalid inputs, non-existent IDs, or invalid query parameters
+- Use **Scenario Outlines** and **Examples** for data-driven scenarios
+- Use a **Background** section per feature to set initial conditions (server running, baseline data)
+- Implement **step definitions** as a reusable library (shared steps + story-specific steps)
+- Tests must **run in any order** and **restore initial state** after each scenario (hooks)
+- Tests must **fail clearly if the API is not running**
+
+#### 2. Source Code
+
+- Clean, well-structured step definition code (Bob Martin’s Clean Code guidelines)
+- Centralised API wrapper and shared steps; story-specific step files per feature
+
+#### 3. Bug Summaries
+
+- For each new bug found during story test execution, write a bug summary (PDF) with story reference, steps to reproduce, and impact
+
+#### 4. Videos
+
+- Video of all story tests running (at least two different orders, e.g. default and random)
+- Video showing story tests failing when the API is not running
+
+#### 5. Written Report (PDF, 5–10 pages)
+
+- Summary of deliverables
+- Structure of the story test suite
+- Description of the source code repository
+- Findings of story test suite execution (including bug summary)
+
+---
+
 ## Repository Organization
 
-The repository is organized to meet all Part A requirements:
+The repository is organized to meet Part A and Part B requirements:
 
 ```
 ECSE429/
 ├── README.md
-└── partA/
-    ├── exploratory-testing/
-    ├── scripts/
-    ├── unit-tests/
-    ├── bugs/
-    └── documentation/
+├── partA/
+│   ├── exploratory-testing/
+│   ├── scripts/
+│   ├── unit-tests/
+│   ├── bugs/
+│   └── documentation/
+└── partB/
+    ├── story_test_suite/           # Cucumber feature files and step definitions
+    │   ├── features/               # Gherkin .feature files (Story1–Story20)
+    │   ├── step_definitions/       # api.js, sharedSteps.js, hooks.js, Story*Steps.js
+    │   └── package.json            # npm test, npm run test:random
+    ├── bug_summaries/              # Bug report PDFs (Story/API defects)
+    └── ECSE429 - Report PartB.pdf  # Part B written report
 ```
 
 ### Directory Requirements Mapping
@@ -178,6 +233,19 @@ ECSE429/
   - Contains video demonstrating all unit tests running, including random order execution
   - Contains 5-10 page PDF report summarizing deliverables, exploratory testing findings, unit test suite structure, repository description, and unit test execution findings
 
+### Part B Directory Mapping
+
+- **`partB/story_test_suite/`**:
+  - **Requirement**: Story tests in Gherkin, step definitions as a library (Part B Section 1–2)
+  - **`features/`**: 20 Gherkin feature files (Story1CreateTodo.feature through Story20…), each with Normal, Alternate, and Error flows and Background
+  - **`step_definitions/`**: `api.js` (HTTP helpers), `sharedSteps.js` (reusable steps), `hooks.js` (Before/After, state cleanup), and `Story*Steps.js` per story
+  - Run: from `partB/story_test_suite/`, `npm install` then `npm test` or `npm run test:random` (API must be running)
+- **`partB/bug_summaries/`**:
+  - **Requirement**: Bug summaries (Part B Section 3)
+  - PDF bug reports for defects found during story test execution, with story reference and steps to reproduce
+- **`partB/` (root)**:
+  - Part B written report PDF and any Part B videos (deliverables Section 4–5)
+
 ---
 
 ## Notes
@@ -186,3 +254,4 @@ ECSE429/
 - Unit tests must be able to run in any order
 - Unit tests must clean up after themselves (restore system state)
 - All deliverables should be in PDF format unless otherwise specified
+- **Part B:** Story tests must run in any order, restore initial state after each scenario, and fail if the API is not running

@@ -19,6 +19,8 @@ const path       = require("path");
 const fs         = require("fs");
 const axios      = require("axios");
 
+const { measureSystem } = require("./src/metrics"); // <-- ADDED: CPU/Mem tracker
+
 const {
   randomTodo, randomTodoUpdate,
   randomProject, randomProjectUpdate,
@@ -60,6 +62,7 @@ function sleep(ms) {
 /** Compute mean, min, max, stddev from an array of numbers. */
 function stats(times) {
   const n    = times.length;
+  if (n === 0) return { mean: 0, min: 0, max: 0, stddev: 0 };
   const mean = times.reduce((s, t) => s + t, 0) / n;
   const variance = times.reduce((s, t) => s + (t - mean) ** 2, 0) / n;
   const sorted   = [...times].sort((a, b) => a - b);
@@ -78,14 +81,8 @@ function fmt(ms) { return ms.toFixed(3); }
 let serverProcess = null;
 
 async function startServer() {
-  if (!fs.existsSync(JAR_PATH)) {
-    throw new Error(`JAR not found at: ${JAR_PATH}`);
-  }
-  serverProcess = spawn("java", ["-jar", JAR_PATH], {
-    detached: false,
-    stdio:    "ignore",
-  });
-
+  // CHANGED: We removed the auto-spawn to prevent the ENOENT crash. 
+  // You must run the JAR manually in another terminal before running this script.
   for (let attempt = 0; attempt < 60; attempt++) {
     try {
       await ping();
@@ -94,7 +91,7 @@ async function startServer() {
       await sleep(200);
     }
   }
-  throw new Error("Server failed to start within 12 seconds");
+  throw new Error("\n❌ Server failed to respond. Please start the JAR manually using 'java -jar ...' in another terminal.\n");
 }
 
 async function shutdownServer() {
@@ -115,7 +112,7 @@ async function shutdownServer() {
 /**
  * Runs the full create → update → delete cycle for all three entity types
  * at the given N.  Returns a results map:
- *   { "todo.create": Stats, "todo.update": Stats, ... }
+ * { "todo.create": Stats, "todo.update": Stats, ... }
  */
 async function benchmarkN(n) {
   const label = `N = ${n}`;
@@ -131,31 +128,52 @@ async function benchmarkN(n) {
 
   // CREATE
   const todoCreateTimes = [];
-  for (let i = 0; i < n; i++) {
-    const r = await createTodo(randomTodo());
-    todoCreateTimes.push(r.durationMs);
-    if (r.data && r.data.id) todoIds.push(r.data.id);
-  }
+  const [todoCreateMetrics] = await Promise.all([
+    measureSystem(500), 
+    (async () => {
+      for (let i = 0; i < n; i++) {
+        const r = await createTodo(randomTodo());
+        todoCreateTimes.push(r.durationMs);
+        if (r.data && r.data.id) todoIds.push(r.data.id);
+      }
+    })()
+  ]);
   results["todo.create"] = stats(todoCreateTimes);
-  process.stdout.write(`  [todos]      create: ${n} ops, mean ${fmt(results["todo.create"].mean)} ms\n`);
+  results["todo.create"].cpu = todoCreateMetrics.cpuPercent; // <-- Added metric
+  results["todo.create"].mem = todoCreateMetrics.freeMemMB;  // <-- Added metric
+  process.stdout.write(`  [todos]      create: ${n} ops, mean ${fmt(results["todo.create"].mean)} ms (CPU: ${todoCreateMetrics.cpuPercent}%)\n`);
 
   // UPDATE
   const todoUpdateTimes = [];
-  for (const id of todoIds) {
-    const r = await updateTodo(id, randomTodoUpdate());
-    todoUpdateTimes.push(r.durationMs);
-  }
+  const [todoUpdateMetrics] = await Promise.all([
+    measureSystem(500), 
+    (async () => {
+      for (const id of todoIds) {
+        const r = await updateTodo(id, randomTodoUpdate());
+        todoUpdateTimes.push(r.durationMs);
+      }
+    })()
+  ]);
   results["todo.update"] = stats(todoUpdateTimes);
-  process.stdout.write(`  [todos]      update: ${todoIds.length} ops, mean ${fmt(results["todo.update"].mean)} ms\n`);
+  results["todo.update"].cpu = todoUpdateMetrics.cpuPercent;
+  results["todo.update"].mem = todoUpdateMetrics.freeMemMB;
+  process.stdout.write(`  [todos]      update: ${todoIds.length} ops, mean ${fmt(results["todo.update"].mean)} ms (CPU: ${todoUpdateMetrics.cpuPercent}%)\n`);
 
   // DELETE
   const todoDeleteTimes = [];
-  for (const id of todoIds) {
-    const r = await deleteTodo(id);
-    todoDeleteTimes.push(r.durationMs);
-  }
+  const [todoDeleteMetrics] = await Promise.all([
+    measureSystem(500), 
+    (async () => {
+      for (const id of todoIds) {
+        const r = await deleteTodo(id);
+        todoDeleteTimes.push(r.durationMs);
+      }
+    })()
+  ]);
   results["todo.delete"] = stats(todoDeleteTimes);
-  process.stdout.write(`  [todos]      delete: ${todoIds.length} ops, mean ${fmt(results["todo.delete"].mean)} ms\n`);
+  results["todo.delete"].cpu = todoDeleteMetrics.cpuPercent;
+  results["todo.delete"].mem = todoDeleteMetrics.freeMemMB;
+  process.stdout.write(`  [todos]      delete: ${todoIds.length} ops, mean ${fmt(results["todo.delete"].mean)} ms (CPU: ${todoDeleteMetrics.cpuPercent}%)\n`);
 
   // ── Projects ───────────────────────────────────────────────────────────────
 
@@ -163,31 +181,52 @@ async function benchmarkN(n) {
 
   // CREATE
   const projectCreateTimes = [];
-  for (let i = 0; i < n; i++) {
-    const r = await createProject(randomProject());
-    projectCreateTimes.push(r.durationMs);
-    if (r.data && r.data.id) projectIds.push(r.data.id);
-  }
+  const [projectCreateMetrics] = await Promise.all([
+    measureSystem(500), 
+    (async () => {
+      for (let i = 0; i < n; i++) {
+        const r = await createProject(randomProject());
+        projectCreateTimes.push(r.durationMs);
+        if (r.data && r.data.id) projectIds.push(r.data.id);
+      }
+    })()
+  ]);
   results["project.create"] = stats(projectCreateTimes);
-  process.stdout.write(`  [projects]   create: ${n} ops, mean ${fmt(results["project.create"].mean)} ms\n`);
+  results["project.create"].cpu = projectCreateMetrics.cpuPercent;
+  results["project.create"].mem = projectCreateMetrics.freeMemMB;
+  process.stdout.write(`  [projects]   create: ${n} ops, mean ${fmt(results["project.create"].mean)} ms (CPU: ${projectCreateMetrics.cpuPercent}%)\n`);
 
   // UPDATE
   const projectUpdateTimes = [];
-  for (const id of projectIds) {
-    const r = await updateProject(id, randomProjectUpdate());
-    projectUpdateTimes.push(r.durationMs);
-  }
+  const [projectUpdateMetrics] = await Promise.all([
+    measureSystem(500), 
+    (async () => {
+      for (const id of projectIds) {
+        const r = await updateProject(id, randomProjectUpdate());
+        projectUpdateTimes.push(r.durationMs);
+      }
+    })()
+  ]);
   results["project.update"] = stats(projectUpdateTimes);
-  process.stdout.write(`  [projects]   update: ${projectIds.length} ops, mean ${fmt(results["project.update"].mean)} ms\n`);
+  results["project.update"].cpu = projectUpdateMetrics.cpuPercent;
+  results["project.update"].mem = projectUpdateMetrics.freeMemMB;
+  process.stdout.write(`  [projects]   update: ${projectIds.length} ops, mean ${fmt(results["project.update"].mean)} ms (CPU: ${projectUpdateMetrics.cpuPercent}%)\n`);
 
   // DELETE
   const projectDeleteTimes = [];
-  for (const id of projectIds) {
-    const r = await deleteProject(id);
-    projectDeleteTimes.push(r.durationMs);
-  }
+  const [projectDeleteMetrics] = await Promise.all([
+    measureSystem(500), 
+    (async () => {
+      for (const id of projectIds) {
+        const r = await deleteProject(id);
+        projectDeleteTimes.push(r.durationMs);
+      }
+    })()
+  ]);
   results["project.delete"] = stats(projectDeleteTimes);
-  process.stdout.write(`  [projects]   delete: ${projectIds.length} ops, mean ${fmt(results["project.delete"].mean)} ms\n`);
+  results["project.delete"].cpu = projectDeleteMetrics.cpuPercent;
+  results["project.delete"].mem = projectDeleteMetrics.freeMemMB;
+  process.stdout.write(`  [projects]   delete: ${projectIds.length} ops, mean ${fmt(results["project.delete"].mean)} ms (CPU: ${projectDeleteMetrics.cpuPercent}%)\n`);
 
   // ── Categories ─────────────────────────────────────────────────────────────
 
@@ -195,33 +234,56 @@ async function benchmarkN(n) {
 
   // CREATE
   const categoryCreateTimes = [];
-  for (let i = 0; i < n; i++) {
-    const r = await createCategory(randomCategory());
-    categoryCreateTimes.push(r.durationMs);
-    if (r.data && r.data.id) categoryIds.push(r.data.id);
-  }
+  const [catCreateMetrics] = await Promise.all([
+    measureSystem(500), 
+    (async () => {
+      for (let i = 0; i < n; i++) {
+        const r = await createCategory(randomCategory());
+        categoryCreateTimes.push(r.durationMs);
+        if (r.data && r.data.id) categoryIds.push(r.data.id);
+      }
+    })()
+  ]);
   results["category.create"] = stats(categoryCreateTimes);
-  process.stdout.write(`  [categories] create: ${n} ops, mean ${fmt(results["category.create"].mean)} ms\n`);
+  results["category.create"].cpu = catCreateMetrics.cpuPercent;
+  results["category.create"].mem = catCreateMetrics.freeMemMB;
+  process.stdout.write(`  [categories] create: ${n} ops, mean ${fmt(results["category.create"].mean)} ms (CPU: ${catCreateMetrics.cpuPercent}%)\n`);
 
   // UPDATE
   const categoryUpdateTimes = [];
-  for (const id of categoryIds) {
-    const r = await updateCategory(id, randomCategoryUpdate());
-    categoryUpdateTimes.push(r.durationMs);
-  }
+  const [catUpdateMetrics] = await Promise.all([
+    measureSystem(500), 
+    (async () => {
+      for (const id of categoryIds) {
+        const r = await updateCategory(id, randomCategoryUpdate());
+        categoryUpdateTimes.push(r.durationMs);
+      }
+    })()
+  ]);
   results["category.update"] = stats(categoryUpdateTimes);
-  process.stdout.write(`  [categories] update: ${categoryIds.length} ops, mean ${fmt(results["category.update"].mean)} ms\n`);
+  results["category.update"].cpu = catUpdateMetrics.cpuPercent;
+  results["category.update"].mem = catUpdateMetrics.freeMemMB;
+  process.stdout.write(`  [categories] update: ${categoryIds.length} ops, mean ${fmt(results["category.update"].mean)} ms (CPU: ${catUpdateMetrics.cpuPercent}%)\n`);
 
   // DELETE
   const categoryDeleteTimes = [];
-  for (const id of categoryIds) {
-    const r = await deleteCategory(id);
-    categoryDeleteTimes.push(r.durationMs);
-  }
+  const [catDeleteMetrics] = await Promise.all([
+    measureSystem(500), 
+    (async () => {
+      for (const id of categoryIds) {
+        const r = await deleteCategory(id);
+        categoryDeleteTimes.push(r.durationMs);
+      }
+    })()
+  ]);
   results["category.delete"] = stats(categoryDeleteTimes);
-  process.stdout.write(`  [categories] delete: ${categoryIds.length} ops, mean ${fmt(results["category.delete"].mean)} ms\n`);
+  results["category.delete"].cpu = catDeleteMetrics.cpuPercent;
+  results["category.delete"].mem = catDeleteMetrics.freeMemMB;
+  process.stdout.write(`  [categories] delete: ${categoryIds.length} ops, mean ${fmt(results["category.delete"].mean)} ms (CPU: ${catDeleteMetrics.cpuPercent}%)\n`);
 
-  await shutdownServer();
+  // NOTE: Depending on how the Todo Manager handles shutdown, you might need to manually 
+  // restart the server between large N tests if it hangs!
+  // await shutdownServer();
   return results;
 }
 
@@ -264,7 +326,7 @@ function printTable(allResults) {
 
 /**
  * Save all results to a CSV file in the results/ directory.
- * Columns: operation, n, mean_ms, min_ms, max_ms, stddev_ms
+ * Columns: operation, n, mean_ms, min_ms, max_ms, stddev_ms, cpu_percent, free_mem_mb
  */
 function saveCSV(allResults) {
   if (!fs.existsSync(RESULTS_DIR)) {
@@ -275,11 +337,13 @@ function saveCSV(allResults) {
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
   const filepath  = path.join(RESULTS_DIR, `performance-${timestamp}.csv`);
 
-  const lines = ["operation,n,mean_ms,min_ms,max_ms,stddev_ms"];
+  // CHANGED: Added cpu_percent and free_mem_mb headers
+  const lines = ["operation,n,mean_ms,min_ms,max_ms,stddev_ms,cpu_percent,free_mem_mb"];
   for (const n of ns) {
     for (const op of OPERATIONS) {
       const s = allResults[n][op];
-      lines.push([op, n, fmt(s.mean), fmt(s.min), fmt(s.max), fmt(s.stddev)].join(","));
+      // CHANGED: Added s.cpu and s.mem to the CSV output
+      lines.push([op, n, fmt(s.mean), fmt(s.min), fmt(s.max), fmt(s.stddev), s.cpu, s.mem].join(","));
     }
   }
 
@@ -295,7 +359,7 @@ async function main() {
   console.log("╔══════════════════════════════════════════════╗");
   console.log("║  ECSE 429 – Part C: Performance Testing      ║");
   console.log("╚══════════════════════════════════════════════╝");
-  console.log(`  JAR:    ${JAR_PATH}`);
+  console.log(`  JAR:    ${JAR_PATH} (Please ensure it is running)`);
   console.log(`  N:      ${nValues.join(", ")}`);
   console.log(`  Ops:    create / update / delete`);
   console.log(`  Types:  todos, projects, categories`);

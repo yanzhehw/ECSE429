@@ -1,6 +1,6 @@
 \documentclass[11pt,a4paper]{article}
 
-\usepackage[margin=1in]{geometry}
+\usepackage[margin=0.7in]{geometry}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{booktabs}
@@ -75,48 +75,111 @@ The deliverables for Part~C are as follows:
 
 \subsection{Implementation}
 
-% TODO: Your team members responsible for performance testing should fill this in.
-% Describe the technology stack, how measurements were taken, and the experimental setup.
+The dynamic analysis was implemented using a custom Node.js performance test suite. The suite is designed to incrementally stress the REST API by scaling the number of entities ($N$) and measuring the system's response across three core metrics: transaction latency, CPU utilization, and free memory.
 
-\textcolor{red}{\textbf{[TO BE COMPLETED BY PERFORMANCE TESTING TEAM MEMBERS]}}
-
-\bigskip
-\noindent Describe:
+The experimental setup and execution followed these parameters:
 \begin{itemize}
-    \item The programming language and frameworks used (e.g.\ JavaScript, Mocha, Chai).
-    \item How transaction time was measured (e.g.\ \texttt{perf\_hooks}).
-    \item How CPU usage and free memory were tracked (e.g.\ \texttt{node-os-utils}, Activity Monitor).
-    \item The sequence of object counts used for experiments (e.g.\ 1, 5, 10, 50, 100, \ldots, 10000).
-    \item How the server was started and stopped between experiments.
+    \item \textbf{Technology Stack:} The test script was written in JavaScript using Node.js. The \texttt{axios} library was used to execute the HTTP requests (POST, PUT, DELETE), and custom data generation scripts (\texttt{randomData.js}) populated the payloads.
+    \item \textbf{Transaction Timing:} Latency was measured using the Node.js \texttt{perf\_hooks} module (\texttt{performance.now()}), providing high-resolution, sub-millisecond timing for each individual transaction.
+    \item \textbf{System Metrics:} CPU percentage and free available memory were tracked natively using the Node.js \texttt{os} module. To ensure accuracy, the script calculated the CPU delta over a 500ms window running concurrently (via \texttt{Promise.all}) with the HTTP request batches.
+    \item \textbf{Data Scaling:} The suite tested the API under logarithmically increasing loads, specifically seeding the database with $N \in \{1, 10, 50, 100, 500, 1000\}$ objects.
+    \item \textbf{Server Lifecycle:} To isolate the variables, the Java JAR file (\texttt{runTodoManagerRestAPI-1.5.5.jar}) was started manually in a separate terminal process. Because the test script systematically deletes all created objects at the end of each iteration, the database state was reset naturally without requiring a hard server reboot between values of $N$.
 \end{itemize}
 
 \subsection{Findings}
 
-\textcolor{red}{\textbf{[TO BE COMPLETED BY PERFORMANCE TESTING TEAM MEMBERS]}}
+The performance of the API was evaluated across all three primary entity types: Todos, Projects, and Categories. The following charts illustrate the transaction times, CPU utilization, and free memory degradation as $N$ scaled from 1 to 1000. 
 
-\bigskip
-\noindent Include experiments for each entity type (todos, projects, categories) with charts showing:
-\begin{itemize}
-    \item Transaction time (ms) vs.\ number of objects (for add, update, delete).
-    \item CPU usage (\%) vs.\ number of objects.
-    \item Free available memory (MB) vs.\ number of objects.
-\end{itemize}
+\emph{Note: The $X$-axis representing the number of objects ($N$) is plotted on a logarithmic scale (Base 10) to accurately visualize the exponential scaling behavior.}
 
-% Placeholder for charts -- replace with actual figure paths
-% Example:
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=0.8\textwidth]{figures/todo_transaction_time.png}
-%     \caption{Todo transaction time vs.\ number of objects.}
-%     \label{fig:todo-txn}
-% \end{figure}
+\subsubsection{Transaction Time Analysis}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Todos_Time.png}
+    \caption{Todo transaction time (ms) versus the number of objects ($N$).}
+    \label{fig:todo-time}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Projects_Time.png}
+    \caption{Project transaction time (ms) vs.\ number of objects.}
+    \label{fig:project-time}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Category_Time.png}
+    \caption{Category transaction time (ms) vs.\ number of objects.}
+    \label{fig:category-time}
+\end{figure}
+
+
+\subsubsection{CPU Utilization Analysis}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Todos_CPU_Percent.png}
+    \caption{Todo CPU utilization (\%) vs.\ number of objects.}
+    \label{fig:todo-cpu}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Projects_CPU_Percent.png}
+    \caption{Project CPU utilization (\%) vs.\ number of objects.}
+    \label{fig:project-cpu}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Category_CPU_Percent.png}
+    \caption{Category CPU utilization (\%) vs.\ number of objects.}
+    \label{fig:category-cpu}
+\end{figure}
+
+
+\subsubsection{Free Memory Degradation}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Todos_Free_Memory.png}
+    \caption{Todo free memory (MB) vs.\ number of objects.}
+    \label{fig:todo-memory}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Projects_Free_Memory.png}
+    \caption{Project free memory (MB) vs.\ number of objects.}
+    \label{fig:project-memory}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Category_Free_Memory.png}
+    \caption{Category free memory (MB) vs.\ number of objects.}
+    \label{fig:category-memory}
+\end{figure}
+
 
 \subsection{Performance Risks and Recommendations}
 
-\textcolor{red}{\textbf{[TO BE COMPLETED BY PERFORMANCE TESTING TEAM MEMBERS]}}
+Analysis of the dynamic metrics reveals that while the API routes efficiently, it struggles significantly with resource management as the database scales. We observed the following key risks and propose corresponding recommendations:
 
-\bigskip
-\noindent Summarise observed performance risks and recommend code changes based on the dynamic analysis results.
+\begin{itemize}
+    \item \textbf{Risk: Severe Memory Bloat/Leak.} The most critical finding is the aggressive degradation of free memory. At $N=1$, the system reported 5494 MB of free memory. By $N=1000$, this dropped to 5078 MB. The system consumed over 400 MB of RAM to store 1,000 simple text objects (roughly 400 KB per object), which is disproportionately large for standard JSON payloads. If the application scales to 10,000+ objects, the Java heap will likely exhaust its limits, triggering an \texttt{OutOfMemoryError} and crashing the server.
+    \item \textbf{Risk: Concurrency Bottlenecks (CPU Spikes).} While transaction times remained consistently low (sub-millisecond at $N=1000$), the CPU effort required to achieve those times scaled aggressively. CPU utilization spiked from $\sim$5\% at $N=10$ to peaking over 45\% at $N=500$ for single-threaded requests. In a production environment with concurrent users, the CPU would quickly bottleneck at 100\%, leading to locked threads and dropped requests.
+    \item \textbf{The "JVM Warmup" Effect.} Transaction times showed a steep drop from $N=1$ ($\sim$17ms) to $N=1000$ ($\sim$0.3ms). This is a normal characteristic of the Java Virtual Machine (JVM) performing Just-In-Time compilation and class loading on the first request, and poses no risk.
+\end{itemize}
+
+\textbf{Recommendations:}
+\begin{enumerate}
+    \item \textbf{Heap Profiling:} Utilize a memory profiler (such as VisualVM) to analyze heap dumps during high-$N$ loads to identify which objects or data structures are responsible for the 400 MB memory consumption.
+    \item \textbf{Audit Data Structures:} The combined memory bloat and CPU spikes suggest the internal "database" may be using inefficient data structures, such as performing deep copies of large \texttt{ArrayLists} or Maps on every transaction. Static analysis should be directed toward optimizing collection usage.
+    \item \textbf{Garbage Collection Tuning:} Investigate unclosed streams or lingering object references (as supported by the static analysis findings) that may be preventing the JVM's Garbage Collector from reclaiming memory after HTTP requests conclude.
+\end{enumerate}
 
 %% ============================================================
 \section{Static Analysis}
@@ -445,6 +508,6 @@ Table~\ref{tab:recommendations} summarises the key recommendations from the stat
 
 Part~C extended the validation of the Todo Manager REST API into the non-functional domain. The performance testing component measured how transaction time, CPU usage, and memory consumption scale with increasing object counts, revealing scalability characteristics and potential bottlenecks. The static analysis component, performed using SpotBugs~4.7.3, identified 169 warnings across the Java codebase, including correctness bugs (null pointer dereferences, ignored return values), performance issues (string concatenation in loops, inefficient map iteration), and 101 instances of exposed internal representation.
 
-The recommendations provided---ranging from defensive copying and explicit encoding to \texttt{StringBuilder} usage and null-safety checks---are actionable improvements that would reduce technical debt and minimise risk during future modifications or enhancements to the codebase.
+The recommendations provided ranging from defensive copying and explicit encoding to \texttt{StringBuilder} usage and null-safety checks are actionable improvements that would reduce technical debt and minimise risk during future modifications or enhancements to the codebase.
 
 \end{document}
